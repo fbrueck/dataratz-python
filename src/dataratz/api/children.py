@@ -12,7 +12,7 @@ from dataratz.use_cases.child_use_cases import (
 
 children_router = APIRouter(prefix="/children")
 
-class ChildWriteDto(BaseModel):
+class ChildCreateDto(BaseModel):
     first_name: str
     last_name: str
 
@@ -20,7 +20,7 @@ class ChildWriteDto(BaseModel):
         return Child(first_name=self.first_name, last_name=self.last_name)
 
 
-class ChildReadDto(BaseModel):
+class ChildReadDto(ChildCreateDto):
     uuid: UUID
     first_name: str
     last_name: str
@@ -35,7 +35,7 @@ class ChildReadDto(BaseModel):
 
 
 @children_router.get("/{id}")
-def read_root(id: UUID) -> ChildReadDto:
+def get_child(id: UUID) -> ChildReadDto:
     result = ChildGet(ChildInMemoryRepository()).get_child(id)
     if result:
         return ChildReadDto.from_domain(result)
@@ -43,9 +43,9 @@ def read_root(id: UUID) -> ChildReadDto:
         raise HTTPException(status_code=404, detail="Child not found")
 
 
-@children_router.post("/{id}")
-def read_item(
-    child: ChildWriteDto,
+@children_router.post("/")
+def create_child(
+    child: ChildCreateDto,
 ) -> None:
     use_case = ChildCreate(ChildInMemoryRepository())
     use_case.create_child(child.to_domain())
