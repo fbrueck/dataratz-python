@@ -1,7 +1,6 @@
 from logging.config import fileConfig
 
 from alembic import context
-from dataratz.repositories.child_repository import ChildDB
 from dataratz.repositories.db_config import Base, SessionMaker
 
 # this is the Alembic Config object, which provides

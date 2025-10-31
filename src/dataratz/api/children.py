@@ -12,6 +12,7 @@ from dataratz.use_cases.child_use_cases import (
 
 children_router = APIRouter(prefix="/children")
 
+
 class ChildCreateDto(BaseModel):
     first_name: str
     last_name: str

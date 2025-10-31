@@ -16,4 +16,5 @@ dev = [
     "alembic>=1.17.1",
     "hypothesis>=6.142.5",
     "pytest>=8.4.2",
+    "ruff>=0.14.3",
 ]
