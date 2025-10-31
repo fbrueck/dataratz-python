@@ -9,3 +9,5 @@ wheels/
 .hypothesis/
 # Virtual environments
 .venv
+
+.env

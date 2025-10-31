@@ -3,8 +3,10 @@ from uuid import UUID
 from dataratz.domain.child import Child
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID as SQLAlchemyUUID
-from sqlalchemy.orm import DeclarativeBase, MappedColumn
+from sqlalchemy.orm import MappedColumn
 from sqlalchemy.orm import Mapped
+
+from dataratz.repositories.db_config import Base
 
 
 class ChildRepository:    
@@ -24,7 +26,7 @@ class ChildInMemoryRepository(ChildRepository):
         return self.children.get(id, None)
 
 
-class ChildDB(DeclarativeBase):
+class ChildDB(Base):
     __tablename__ = "children"
 
     id: Mapped[UUID] = MappedColumn(
