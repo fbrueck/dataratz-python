@@ -1,28 +1,30 @@
 from __future__ import annotations
+from dataclasses import dataclass
 from uuid import UUID
 from dataratz.domain.child import Child
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID as SQLAlchemyUUID
 from sqlalchemy.orm import MappedColumn
 from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Session
 
 from dataratz.repositories.db_config import Base
 
 
 class ChildRepository:    
-    def add(self, child: Child) -> None:
+    async def add(self, child: Child) -> None:
         raise NotImplementedError
-    def get(self, id: UUID) -> Child | None:
+    async def get(self, id: UUID) -> Child | None:
         raise NotImplementedError
     
 
 class ChildInMemoryRepository(ChildRepository):
     children: dict[UUID, Child] = dict()
 
-    def add(self, child: Child) -> None:
+    async def add(self, child: Child) -> None:
         self.children[child.id] = child
 
-    def get(self, id: UUID) -> Child | None:
+    async def get(self, id: UUID) -> Child | None:
         return self.children.get(id, None)
 
 
@@ -44,16 +46,16 @@ class ChildDB(Base):
             id=child.id, first_name=child.first_name, last_name=child.last_name
         )
 
-
+@dataclass
 class ChildDBRepository(ChildRepository):
-    def __init__(self, session_factory) -> None:
-        self.session_factory = session_factory
+    session: Session
 
-    def add(self, child: Child) -> None:
-        with self.session_factory() as session:
-            session.add(child)
-            session.commit()
+    async def add(self, child: Child) -> None:
+        self.session.add(child)
 
-    def get(self, id: UUID) -> Child | None:
-        with self.session_factory() as session:
-            return session.get(Child, id)
+    async def get(self, id: UUID) -> Child | None:
+        result = self.session.query(ChildDB).filter_by(id=id).one_or_none()
+        if result:
+            return result.to_domain()
+        else:
+            return None

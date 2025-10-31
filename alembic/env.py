@@ -1,7 +1,8 @@
+import asyncio
 from logging.config import fileConfig
 
 from alembic import context
-from dataratz.repositories.db_config import Base, SessionMaker
+from dataratz.repositories.db_config import Base, AsyncSessionMaker
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -48,25 +49,24 @@ def run_migrations_offline() -> None:
     with context.begin_transaction():
         context.run_migrations()
 
+def do_run_migrations(connection):
+    context.configure(connection=connection, target_metadata=target_metadata)
 
-def run_migrations_online() -> None:
+    with context.begin_transaction():
+        context.run_migrations()
+
+async def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
     """
+    async with AsyncSessionMaker() as connection:
+        await connection.run_sync(do_run_migrations)
     
-    with SessionMaker() as session:
-        context.configure(
-            connection=session.connection(), target_metadata=target_metadata
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
-
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    asyncio.run(run_migrations_online())

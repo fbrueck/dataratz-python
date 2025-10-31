@@ -36,8 +36,8 @@ class ChildReadDto(ChildCreateDto):
 
 
 @children_router.get("/{id}")
-def get_child(id: UUID) -> ChildReadDto:
-    result = ChildGet(ChildInMemoryRepository()).get_child(id)
+async def get_child(id: UUID) -> ChildReadDto:
+    result = await ChildGet(ChildInMemoryRepository()).get_child(id)
     if result:
         return ChildReadDto.from_domain(result)
     else:
@@ -45,9 +45,8 @@ def get_child(id: UUID) -> ChildReadDto:
 
 
 @children_router.post("/")
-def create_child(
+async def create_child(
     child: ChildCreateDto,
 ) -> None:
     use_case = ChildCreate(ChildInMemoryRepository())
-    use_case.create_child(child.to_domain())
-    return
+    await use_case.create_child(child.to_domain())

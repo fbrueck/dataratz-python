@@ -9,13 +9,13 @@ from dataratz.repositories.child_repository import ChildRepository
 class ChildCreate:
     child_repsoitory: ChildRepository
 
-    def create_child(self, child: Child) -> None:
-        self.child_repsoitory.add(child)
+    async def create_child(self, child: Child) -> None:
+        await self.child_repsoitory.add(child)
 
 
 @dataclass
 class ChildGet:
     child_repsoitory: ChildRepository
 
-    def get_child(self, id: UUID) -> Child | None:
-        return self.child_repsoitory.get(id)
+    async def get_child(self, id: UUID) -> Child | None:
+        return await self.child_repsoitory.get(id)

@@ -1,12 +1,14 @@
 from hypothesis import given
+import pytest
 from dataratz.domain.child import Child
 from dataratz.repositories.child_repository import ChildInMemoryRepository
 from tests.strategies import child_strategy
 
 
+@pytest.mark.asyncio
 @given(child_strategy)
-def test_add_get(child: Child) -> None:
+async def test_add_get(child: Child) -> None:
     repository = ChildInMemoryRepository()
-    repository.add(child)
-    result = repository.get(child.id)
+    await repository.add(child)
+    result = await repository.get(child.id)
     assert result == child
