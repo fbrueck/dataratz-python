@@ -1,0 +1,16 @@
+[project]
+name = "dataratz-python"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.120.3",
+    "sqlalchemy>=2.0.44",
+]
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.142.5",
+    "pytest>=8.4.2",
+]
